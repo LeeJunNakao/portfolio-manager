@@ -1,0 +1,40 @@
+version: "3"
+
+volumes:
+  db-data:
+    driver: local
+
+services:
+  app: &app
+    hostname: app
+    image: portfolio-manager
+    stdin_open: true
+    tty: true 
+    build: .
+    command: ash -c "export $$(egrep -v '^#' .env | xargs) && ash"
+    ports:
+      - "5000:5000"
+    volumes: 
+      - .:/usr/app
+    depends_on:
+      - pgsql-porfolio-db
+    environment: &env
+      DATABASE_NAME: "portfolio_manager"
+      FLASK_ENV: "development"
+      PYTHONPATH: "/usr/app"
+
+  tests:
+    <<: *app
+    environment: 
+      DATABASE_NAME: "tests_db"
+      FLASK_ENV: "testing"
+
+  pgsql-porfolio-db:
+    hostname: pgsql-db
+    image: postgres:11
+    environment:
+      POSTGRES_PASSWORD: "portfoliomanager_8786"
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
