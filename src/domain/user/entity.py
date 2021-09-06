@@ -1,40 +1,46 @@
 import re
-from typing import List, Match
-from src.domain._exceptions import InvalidAttributes
+from toolz import pipe
+from typing import Any, Dict, List, Match, Optional, TypedDict
+from src.domain._exceptions import InvalidAttributes, AttributesError
 from src.domain._exceptions.fns import getErrorsAttributes
 
-email_regex = r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)"
+class ValidationResult:
+    def __init__(self, fields: Dict[str, Any], result: Optional[Dict[str, bool]]=None) -> None:
+        self.fields = {**fields}
+        self.result = {**result} if result else {item: False for item in fields.keys()}
+
+    def __repr__(self) -> str:
+        return str({ "fields": self.fields, "result": self.result})
+    
+    def get_updated_result(self, field, status) -> Dict[str, any]:
+        return { "fields": self.fields, "result": {**self.result, field: status}}
 
 
 class User():
     def __init__(self, name: str, email: str, password: str):
-        self._errors = []
-        self.name = name
-        self.email = email
-        self.password = password
-        self._verify_errors()
+        self._errors: List[AttributesError] = []
+        self._verify_args_types(name=name, email=email, password=password)
+    
+    def _verify_args_types(self,**fields) -> None:
+        pipe(ValidationResult(fields), self._validate_name, self._validate_email, self._validate_password, print)
+        
+    def _validate_name(self, validation_result: ValidationResult) -> ValidationResult:
+        result = True if type(validation_result.fields.get("name")) == str else False
+        return ValidationResult(**validation_result.get_updated_result("name", result))     
 
-    def _validate_name(self, name: str):
-        if type(name) != str:
-            self._errors.append(getErrorsAttributes("name", "string"))
+    def _validate_email(self, validation_result: ValidationResult) -> ValidationResult:
+        email_regex = r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)"
+        result = True if re.match(email_regex, validation_result.fields.get("email")) else False
+        return ValidationResult(**validation_result.get_updated_result("email", result))
+    
+    def _validate_password(self, validation_result: ValidationResult) -> ValidationResult:
+        password = validation_result.fields.get("password")
+        has_lowercase = re.search("[a-z]", password)
+        has_uppercase = re.search("[A-Z]", password)
+        has_number = re.search("[0-9]", password)
+        is_min_length_valid = len(password) >= 8
+        is_max_length_valid = len(password) <= 20
 
-    def _validate_email(self, email: str):
-        if type(email) != str:
-            self._errors.append(getErrorsAttributes("email", "string"))
-        elif not re.match(email_regex, email):
-            self._errors.append(getErrorsAttributes("email", "valid email"))
-
-    def _verify_errors(self):
-        if len(self._errors):
-            raise InvalidAttributes(self._errors)
-
-    def __setattr__(self, name: str, value) -> None:
-        if name == "name":
-            self._validate_name(value)
-        if name == "email":
-            self._validate_email(value)
-
-        super().__setattr__(name, value)
-
-    def __repr__(self) -> str:
-        return f"name: {self.name}, email: {self.email}"
+        result = has_lowercase is not None and has_uppercase is not None and has_number is not None and is_min_length_valid and is_max_length_valid
+        
+        return ValidationResult(**validation_result.get_updated_result("password", result))
