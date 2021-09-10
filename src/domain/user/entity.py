@@ -1,6 +1,6 @@
 from toolz import pipe
 from typing import Callable, List, Tuple
-from src.domain._tools.classes import GenericDomain, error
+from src.domain.GenericDomain import GenericDomain, error
 from src.domain._tools.validation_fns import validate_type, validate_email, validate_password
 
 
