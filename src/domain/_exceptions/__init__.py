@@ -1,19 +1,19 @@
-from typing import List, TypedDict
-
-
-class AttributesError(TypedDict):
-    name: str
-    type: str
-
+from typing import List, TypedDict, Tuple
+from src.domain._tools.classes import error
 
 class InvalidAttributes(Exception):
-    def __init__(self, attributes: List[AttributesError]):
+    def __init__(self, attributes: List[error]):
         errors = [
-            f"{attribute.get('name')} must be {attribute.get('type')}" for attribute in attributes
+            f"{name} must be {msg}" for name, msg in attributes
         ]
+        self._attributes = attributes
         self.message = ", ".join(errors)
         super().__init__(self.message)
 
     @property
     def as_dict(self):
-        return {"message": self.message}
+        return { 
+            "error": { 
+                name: msg for name, msg in self._attributes
+            }
+        }
