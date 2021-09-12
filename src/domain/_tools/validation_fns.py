@@ -1,13 +1,21 @@
 import re
-from typing import Any
+from typing import Any, Callable, Iterable, List, Tuple, Union
 
-def validate_type(value: Any, _type: Any) -> bool:
-        return True if type(value) == _type else False
+
+def validate(fn: Callable[[Any], bool]) -> bool:
+    func: Callable[[Any], bool] = lambda value: fn(value)
+    return func
+
+
+def validate_type(value: Any, _type: Any) -> Callable[[Any], bool]:
+    return type(value) == _type
+
 
 def validate_email(value: str) -> bool:
     email_regex = r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)"
 
-    return True if re.match(email_regex, value) else False
+    return bool(re.match(email_regex, value))
+
 
 def validate_password(value: str) -> bool:
     has_lowercase = re.search("[a-z]", value) is not None
@@ -16,5 +24,18 @@ def validate_password(value: str) -> bool:
     is_min_length_valid = len(value) >= 8
     is_max_length_valid = len(value) <= 20
 
-    return has_lowercase and has_uppercase and has_number and is_min_length_valid and is_max_length_valid
-    
+    return (
+        has_lowercase
+        and has_uppercase
+        and has_number
+        and is_min_length_valid
+        and is_max_length_valid
+    )
+
+
+def validate_max_length(value: Union[str, List, Tuple, Iterable], limit: int) -> bool:
+    return True if len(value) <= limit else False
+
+
+def validate_min_length(value: Union[str, List, Tuple, Iterable], limit: int) -> bool:
+    return True if len(value) >= limit else False

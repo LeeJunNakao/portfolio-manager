@@ -9,12 +9,12 @@ services:
     hostname: app
     image: portfolio-manager
     stdin_open: true
-    tty: true 
+    tty: true
     build: .
-    command: ash -c "export $$(egrep -v '^#' .env | xargs) && ash"
+    command: bash -c "export $$(egrep -v '^#' .env | xargs) && bash"
     ports:
       - "5000:5000"
-    volumes: 
+    volumes:
       - .:/usr/app
     depends_on:
       - pgsql-porfolio-db
@@ -25,7 +25,7 @@ services:
 
   tests:
     <<: *app
-    environment: 
+    environment:
       DATABASE_NAME: "tests_db"
       FLASK_ENV: "testing"
 
