@@ -34,7 +34,7 @@ def get_len_validation(
     limit: int,
     min: bool = False,
 ) -> List[error]:
-    operator_text = "more than" if min else "less than"
+    operator_text = "greater than" if min else "less than"
     validate = validate_min_length if min else validate_max_length
     return get_validation(
         name, f"must be {operator_text} {limit}", validate(value, limit)

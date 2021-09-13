@@ -11,7 +11,6 @@ ENV PYTHON_VERSION=3.8 \
 RUN pip install -U pip
 RUN pip install -U pytest
 RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python - --version 1.1.8
-#RUN source $HOME/.poetry/env
 RUN poetry config virtualenvs.create false
 COPY pyproject.toml pyproject.toml
 RUN poetry install

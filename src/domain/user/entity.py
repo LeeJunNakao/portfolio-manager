@@ -1,8 +1,8 @@
-from toolz.functoolz import curry
+from toolz import pipe, curry
+from uuid import uuid1
 from src.domain._tools.validation import validation_handler
 from src.domain._tools.functional import reversed_curry
-from toolz import pipe
-from typing import Callable, List
+from typing import Callable, List, Optional
 from src.domain.GenericDomain import GenericDomain, error
 from src.domain._exceptions.message_handler import (
     get_len_validation,
@@ -13,9 +13,14 @@ from src.domain._exceptions.message_handler import (
 
 
 class User(GenericDomain):
-    def __init__(self, name: str, email: str, password: str):
+    def __init__(self, name: str, email: str, password: str, _id: Optional[int] = None):
         self._errors = self._validate_args_types(name, email, password)
-        super().__init__(name=name, email=email, password=password)
+        GenericDomain.__init__(self, name=name, email=email, password=password, _id=_id)
+        self._set_id(_id)
+
+    def _set_id(self, id: Optional[int]):
+        if id is None:
+            self._set_attributes(_id=uuid1())
 
     def _validate_args_types(self, name: str, email: str, password: str) -> List[error]:
         return pipe(
@@ -24,9 +29,6 @@ class User(GenericDomain):
             self._validate_email(email),
             self._validate_password(password),
         )
-
-    def __repr__(self) -> str:
-        return str({"name": self.name, "email": self.email})  # type: ignore
 
     @curry
     def _validate_name(self, name: str, errors_list: List[error]) -> List[error]:
