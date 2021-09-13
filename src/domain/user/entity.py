@@ -45,9 +45,7 @@ class User(GenericDomain):
         return [*errors_list, *name_validation]
 
     @curry
-    def _validate_email(
-        self, email: str, errors_list: List[error]
-    ) -> Callable[[List[error]], List[error]]:
+    def _validate_email(self, email: str, errors_list: List[error]) -> List[error]:
         MAX_LENGTH = 100
         email_validation = validation_handler(
             email,
@@ -61,7 +59,7 @@ class User(GenericDomain):
     @curry
     def _validate_password(
         self, password: str, errors_list: List[error]
-    ) -> Callable[[List[error]], List[error]]:
+    ) -> List[error]:
         MIN_LENGTH = 8
         MAX_LENGTH = 20
 

@@ -1,5 +1,5 @@
 from toolz import curry, pipe
-from typing import Any, Callable, List, Iterable
+from typing import Any, Callable, Iterator, List, Iterable, Optional, TypeVar, Union
 from inspect import signature
 
 
@@ -20,9 +20,7 @@ def pipe_until_first(
     return pipe(element, *[wrapper(fn) for fn in fns])
 
 
-def reversed_curry(
-    fn: Callable[[Any], Any], *args: Any, **kwargs: Any
-) -> Callable[[Any], Any]:
+def reversed_curry(fn, *args: Any, **kwargs: Any):
     """
     It returns a curry function, but the argument passed to the
     returned function will be in the first position.
@@ -34,18 +32,18 @@ def reversed_curry(
     required_kwargs = [k for k in kwargs.keys() if k in required_params]
 
     if len([*args, *required_kwargs]) >= required_params_len:
-        return fn(*args, **kwargs)
+        return fn(*args, **kwargs)  # type: ignore
 
     def handler(*arguments: Any, **kwarguments: Any):
         required_kwarguments = [k for k in kwarguments.keys() if k in required_params]
         if len([*arguments, *required_kwarguments]) < required_params_len:
             return lambda *a, **k: handler(*a, *arguments, **kwarguments, **k)
-        return fn(*arguments, **kwarguments)
+        return fn(*arguments, **kwarguments)  # type: ignore
 
     return handler(*args, **kwargs)
 
 
-def executable_iterator(fns: Iterable[Callable[[None], List[Any]]]):
+def executable_iterator(fns: Iterator[Callable[[], List[Any]]]):
     """
     Receive a iterator with functions, it will iterate until
     a function return a not empity list.
@@ -58,10 +56,13 @@ def executable_iterator(fns: Iterable[Callable[[None], List[Any]]]):
         return []
 
 
-def caster(fn: Callable[[Any], Any], arg: Any) -> Callable[[Any], Any]:
+_T = TypeVar("_T")
+
+
+def caster(fn: Callable[[Any], _T], arg: Any) -> Callable[[], _T]:
     """
     Receive a function and argument and return the function.
     Used for lazy functions.
     """
 
-    return lambda: fn(arg)
+    return lambda: fn(arg)  # type: ignore

@@ -1,4 +1,4 @@
-from typing import Any, Iterable, List, Tuple, Union
+from typing import Any, Iterable, List, Sized, Tuple, Union
 from .protocols import error
 from src.domain._tools.validation_fns import (
     validate_max_length,
@@ -29,7 +29,7 @@ def get_password_validation(value: str, name: str = "password") -> List[error]:
 
 
 def get_len_validation(
-    value: Union[str, List, Tuple, Iterable],
+    value: Sized,
     name: str,
     limit: int,
     min: bool = False,

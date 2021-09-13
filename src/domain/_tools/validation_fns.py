@@ -1,13 +1,8 @@
 import re
-from typing import Any, Callable, Iterable, List, Tuple, Union
+from typing import Any, Callable, Iterable, List, Tuple, Union, Sized
 
 
-def validate(fn: Callable[[Any], bool]) -> bool:
-    func: Callable[[Any], bool] = lambda value: fn(value)
-    return func
-
-
-def validate_type(value: Any, _type: Any) -> Callable[[Any], bool]:
+def validate_type(value: Any, _type: Any) -> bool:
     return type(value) == _type
 
 
@@ -33,9 +28,9 @@ def validate_password(value: str) -> bool:
     )
 
 
-def validate_max_length(value: Union[str, List, Tuple, Iterable], limit: int) -> bool:
+def validate_max_length(value: Sized, limit: int) -> bool:
     return True if len(value) <= limit else False
 
 
-def validate_min_length(value: Union[str, List, Tuple, Iterable], limit: int) -> bool:
+def validate_min_length(value: Sized, limit: int) -> bool:
     return True if len(value) >= limit else False
