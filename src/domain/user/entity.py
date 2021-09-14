@@ -1,5 +1,4 @@
 from toolz import pipe, curry
-from uuid import uuid1
 from src.domain._tools.validation import validation_handler
 from src.domain._tools.functional import reversed_curry
 from typing import List, Optional
@@ -13,14 +12,10 @@ from src.domain._exceptions.message_handler import (
 
 
 class User(GenericDomain):
-    def __init__(self, name: str, email: str, password: str, _id: Optional[int] = None):
+    def __init__(self, name: str, email: str, password: str, id_: Optional[int] = None):
         self._errors = self._validate_args_types(name, email, password)
-        GenericDomain.__init__(self, name=name, email=email, password=password, _id=_id)
-        self._set_id(_id)
-
-    def _set_id(self, id: Optional[int]):
-        if id is None:
-            self._set_attributes(_id=uuid1())
+        GenericDomain.__init__(self, name=name, email=email, password=password, id_=id_)
+        self._set_id(id_)
 
     def _validate_args_types(self, name: str, email: str, password: str) -> List[error]:
         return pipe(

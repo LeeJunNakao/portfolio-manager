@@ -1,9 +1,10 @@
 import re
 from typing import Any, Sized
+from src.domain._tools.enum import BaseEnum, EnumVar
 
 
 def validate_type(value: Any, _type: Any) -> bool:
-    return type(value) == _type
+    return isinstance(value, _type)
 
 
 def validate_email(value: str) -> bool:
@@ -34,3 +35,7 @@ def validate_max_length(value: Sized, limit: int) -> bool:
 
 def validate_min_length(value: Sized, limit: int) -> bool:
     return True if len(value) >= limit else False
+
+
+def validate_enum(enum_: BaseEnum) -> bool:
+    return enum_.value is not EnumVar.INVALID_OPTION

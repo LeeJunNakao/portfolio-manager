@@ -1,7 +1,7 @@
 import pytest
 from uuid import UUID
 from src.domain.user.entity import User
-from src.domain._exceptions import InvalidAttributes
+from src.domain._exceptions import InvalidAttributesException
 
 
 @pytest.fixture
@@ -21,26 +21,26 @@ def short_user_data():
 
 class TestUser:
     def test_invalid_data_type(self, invalid_user_data):
-        with pytest.raises(InvalidAttributes) as excinfo:
+        with pytest.raises(InvalidAttributesException) as excinfo:
             User(**invalid_user_data)
 
         for item in invalid_user_data.keys():
             assert f"{item} must be a string" in excinfo.value.message
 
     def test_invalid_email(self, valid_user_data):
-        with pytest.raises(InvalidAttributes) as excinfo:
+        with pytest.raises(InvalidAttributesException) as excinfo:
             User(**{**valid_user_data, "email": "james@email"})
 
         assert "email must be a valid email" == excinfo.value.message
 
     def test_weak_password(self, valid_user_data):
-        with pytest.raises(InvalidAttributes) as excinfo:
+        with pytest.raises(InvalidAttributesException) as excinfo:
             User(**{**valid_user_data, "password": "weak_password"})
 
         assert "password must be a strong password" == excinfo.value.message
 
     def test_short_user_data(self, valid_user_data, short_user_data):
-        with pytest.raises(InvalidAttributes) as excinfo:
+        with pytest.raises(InvalidAttributesException) as excinfo:
             User(**{**valid_user_data, **short_user_data})
 
         assert "name must be greater than 5" in excinfo.value.message

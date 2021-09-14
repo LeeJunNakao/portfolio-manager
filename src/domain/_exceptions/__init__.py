@@ -3,7 +3,7 @@ from typing import List, Tuple
 error = Tuple[str, str]
 
 
-class InvalidAttributes(Exception):
+class InvalidAttributesException(Exception):
     def __init__(self, attributes: List[error]):
         errors = [f"{name} {msg}" for name, msg in attributes]
         self._attributes = attributes
