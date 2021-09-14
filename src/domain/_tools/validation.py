@@ -1,4 +1,4 @@
-from typing import Any, Callable, Iterable, List
+from typing import Any, Callable, List
 from src.domain._exceptions.protocols import error
 from src.domain._tools.functional import executable_iterator, caster
 

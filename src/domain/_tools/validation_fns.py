@@ -1,5 +1,5 @@
 import re
-from typing import Any, Callable, Iterable, List, Tuple, Union, Sized
+from typing import Any, Sized
 
 
 def validate_type(value: Any, _type: Any) -> bool:

@@ -1,4 +1,4 @@
-from typing import Any, Iterable, List, Sized, Tuple, Union
+from typing import Any, List, Sized
 from .protocols import error
 from src.domain._tools.validation_fns import (
     validate_max_length,

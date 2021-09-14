@@ -1,5 +1,5 @@
 from toolz import curry, pipe
-from typing import Any, Callable, Iterator, List, Iterable, Optional, TypeVar, Union
+from typing import Any, Callable, Iterator, List, TypeVar
 from inspect import signature
 
 

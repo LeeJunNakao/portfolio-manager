@@ -2,7 +2,7 @@ from toolz import pipe, curry
 from uuid import uuid1
 from src.domain._tools.validation import validation_handler
 from src.domain._tools.functional import reversed_curry
-from typing import Callable, List, Optional
+from typing import List, Optional
 from src.domain.GenericDomain import GenericDomain, error
 from src.domain._exceptions.message_handler import (
     get_len_validation,

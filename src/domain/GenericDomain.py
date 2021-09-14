@@ -1,4 +1,4 @@
-from typing import Any, Tuple, List
+from typing import Tuple
 from src.domain._exceptions import InvalidAttributes
 
 attribute_name = str
